@@ -7,7 +7,8 @@
 
 ### ready
 ```sh
-$ npm install -g gulp-cli
+$ npm install -g gulp-cli # you're gonna need gulp 4.0
+$ npm install
 ```
 
 ### set
