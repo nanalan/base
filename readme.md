@@ -17,9 +17,10 @@ $ gulp --tasks
 
 ### go
 ```sh
-$ gulp
+$ gulp build
+$ gulp watch
 ```
 
 ### _base_
 1. _A foundation or starting point for further work._
-2. _A main or important element or ingredient to which other things are added.
+2. _A main or important element or ingredient to which other things are added._
