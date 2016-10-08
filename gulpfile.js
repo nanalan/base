@@ -62,7 +62,7 @@ gulp.task('build:css', resolve => {
 
 gulp.task('watch:css', () => gulp.watch('src/**/*.styl', gulp.series('build:css')))
 
-function buildJs(resolve) {
+function buildJs(resolve, watch=false) {
   const browserify = require('browserify')
   const watchify = require('uber-watchify')
 
@@ -82,10 +82,11 @@ function buildJs(resolve) {
   let opts = Object.assign({}, watchify.args, {
     entries: ['src/script.js'],
     debug: true,
-    watch: true,
+    watch,
   })
 
-  let b = watchify(browserify(opts))
+  if(watch) var b = watchify(browserify(opts))
+  else      var b = browserify(opts)
 
   b.transform(require('babelify').configure({
     presets: 'latest',
@@ -115,14 +116,11 @@ function buildJs(resolve) {
 }
 
 gulp.task('build:js', resolve => {
-  return buildJs(() => {
-    resolve()
-    process.exit()
-  })()
+  return buildJs(resolve, false)()
 })
 
 gulp.task('watch:js', () => {
-  buildJs(() => {})()
+  buildJs(() => {}, true)()
 })
 
 gulp.task('build', gulp.parallel('build:js', 'build:css'))
