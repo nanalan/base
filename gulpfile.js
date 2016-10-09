@@ -21,6 +21,7 @@ gulp.task('build:css', resolve => {
       })
     } else {
       stylus(style)
+        .use(require('jeet'))
         .set('filename', 'src/style.styl')
         .set('sourcemap', { inline: true })
         .set('paths', [__dirname + '/src'])
