@@ -1,7 +1,7 @@
 # base
 > my very own gulpfile
 
-`src/style.styl` > [Stylus](http://stylus-lang.com/) + [Jeet](http://jeet.gs/) [Rucksack (w/ addons)](https://simplaio.github.io/rucksack/) + [Normalize.css](https://necolas.github.io/normalize.css/) + [cssnano](http://cssnano.co/) > `dist/style.css`
+`src/style.styl` > [Stylus](http://stylus-lang.com/) + [Jeet](http://jeet.gs/) + [Rucksack (w/ addons)](https://simplaio.github.io/rucksack/) + [Normalize.css](https://necolas.github.io/normalize.css/) + [cssnano](http://cssnano.co/) > `dist/style.css`
 
 `src/script.js` > [Babel (ES2017)](https://babeljs.io/) + [Browserify](http://browserify.org/) + [Uglify2](http://lisperator.net/uglifyjs/) > `dist/script.js`
 
