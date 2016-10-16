@@ -1,10 +1,13 @@
 {
   "name": "base",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-latest": "^6.16.0",
+    "babel-plugin-syntax-flow": "^6.13.0",
+    "babel-plugin-transform-flow-strip-types": "^6.14.0",
+    "babel-plugin-typecheck": "^3.9.0",
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "cssnano": "^3.7.6",

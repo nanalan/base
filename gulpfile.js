@@ -2,18 +2,35 @@ const gulp = require('gulp')
 const util = require('gulp-util')
 const fs = require('fs')
 
+const IN_CSS = 'src/style.styl'
+const OUT_CSS = 'dist/style.css'
+
+const IN_JS = 'src/script.js'
+const OUT_JS = 'dist/script.js'
+
+let watching_css = false
+
 gulp.task('build:css', resolve => {
   const stylus = require('stylus') // gulp-stylus doesn't work w/ gulp 4
   const postcss = require('postcss')
 
   function reject(err) {
-    throw new util.PluginError({
+    const e = new util.PluginError({
       plugin: 'build:css',
       message: err.message
     })
+
+    if(watching_css) { util.log(
+      util.colors.red('Error')
+    + ' in plugin \''
+    + util.colors.cyan('build:css')
+    + '\'\nMessage:\n    '
+    + e.message
+    )
+    } else throw e
   }
 
-  fs.readFile('src/style.styl', 'utf8', (err, style) => {
+  fs.readFile(IN_CSS, 'utf8', (err, style) => {
     if(err) {
       throw new util.PluginError({
         plugin: 'build:css',
@@ -21,7 +38,7 @@ gulp.task('build:css', resolve => {
       })
     } else {
       stylus(style)
-        .set('filename', 'src/style.styl')
+        .set('filename', IN_CSS)
         .set('sourcemap', { inline: true })
         .set('paths', [__dirname + '/src'])
         .import(__dirname + '/node_modules/jeet/stylus/jeet/index')
@@ -37,18 +54,18 @@ gulp.task('build:css', resolve => {
               require('cssnano')({ safe: true }),
             ])
               .process(css, {
-                from: 'src/style.styl',
-                to: 'dist/style.css',
+                from: IN_CSS,
+                to: OUT_CSS,
                 map: {
                   inline: false,
                 },
               })
               .catch(reject)
               .then(res => {
-                fs.writeFile('dist/style.css', res.css, 'utf8', err => {
+                fs.writeFile(OUT_CSS, res.css, 'utf8', err => {
                   if(err) reject(err)
                   else {
-                    fs.writeFile('dist/style.css.map', res.map, 'utf8', err => {
+                    fs.writeFile(OUT_CSS + '.map', res.map, 'utf8', err => {
                       if(err) reject(err)
                       else resolve()
                     })
@@ -61,9 +78,16 @@ gulp.task('build:css', resolve => {
   })
 })
 
-gulp.task('watch:css', () => gulp.watch('src/**/*.styl', gulp.series('build:css')))
+gulp.task('watch:css', () => {
+  watching_css = true
+  gulp.watch('src/**/*.styl', gulp.series('build:css'))
+})
 
 function buildJs(resolve, watch=false) {
+  let out = OUT_JS.split('/')
+  let out_file = out.pop()
+  let out_dir = out.join('/')
+
   const browserify = require('browserify')
   const watchify = require('uber-watchify')
 
@@ -74,14 +98,23 @@ function buildJs(resolve, watch=false) {
   const buffer = require('vinyl-buffer')
 
   function reject(err) {
-    throw new util.PluginError({
+    const e = new util.PluginError({
       plugin: 'build:js',
       message: err.message
     })
+
+    if(watch) { util.log(
+      util.colors.red('Error')
+    + ' in plugin \''
+    + util.colors.cyan('build:css')
+    + '\'\n'
+    + (err.codeFrame || '') + '\n' + e.message
+    )
+    } else throw e
   }
 
   let opts = Object.assign({}, watchify.args, {
-    entries: ['src/script.js'],
+    entries: [IN_JS],
     debug: true,
     watch,
   })
@@ -91,7 +124,12 @@ function buildJs(resolve, watch=false) {
 
   b.transform(require('babelify').configure({
     presets: 'latest',
-    plugins: 'transform-runtime',
+    plugins: [
+      'transform-runtime',
+      'typecheck',
+      'syntax-flow',
+      'transform-flow-strip-types'
+    ],
   }))
 
   b.on('update', () => {
@@ -105,12 +143,12 @@ function buildJs(resolve, watch=false) {
     return b.bundle()
       .on('error', reject)
       .on('end', resolve)
-      .pipe(source('script.js'))
+      .pipe(source(out_file))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(require('gulp-uglify')())
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest(out_dir))
   }
 
   return build
@@ -126,3 +164,4 @@ gulp.task('watch:js', () => {
 
 gulp.task('build', gulp.parallel('build:js', 'build:css'))
 gulp.task('watch', gulp.parallel('watch:js', 'watch:css'))
+gulp.task('default', gulp.series('build'))

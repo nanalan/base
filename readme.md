@@ -3,10 +3,15 @@
 
 `src/style.styl` > [Stylus](http://stylus-lang.com/) + [Jeet](http://jeet.gs/) + [Rucksack (w/ addons)](https://simplaio.github.io/rucksack/) + [Normalize.css](https://necolas.github.io/normalize.css/) + [cssnano](http://cssnano.co/) > `dist/style.css`
 
-`src/script.js` > [Babel (ES2017)](https://babeljs.io/) + [Browserify](http://browserify.org/) + [Uglify2](http://lisperator.net/uglifyjs/) > `dist/script.js`
+`src/script.js` > [Flow](https://flowtype.org/) > [Babel (ES2017)](https://babeljs.io/) + [Browserify](http://browserify.org/) + [Uglify2](http://lisperator.net/uglifyjs/) > `dist/script.js`
 
 ### ready
 ```sh
+$ yarn global add gulp-cli
+$ yarn
+
+# or use npm
+
 $ npm install -g gulp-cli # you're gonna need gulp 4.0
 $ npm install
 ```
