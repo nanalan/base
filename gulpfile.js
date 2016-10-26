@@ -106,7 +106,7 @@ function buildJs(resolve, watch=false) {
     if(watch) { util.log(
       util.colors.red('Error')
     + ' in plugin \''
-    + util.colors.cyan('build:css')
+    + util.colors.cyan('build:js')
     + '\'\n'
     + (err.codeFrame || '') + '\n' + e.message
     )
